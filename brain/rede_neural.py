@@ -19,14 +19,14 @@ class RedeNeural:
         return x
 
     def backprop(self, x, y, func_custo, lr):
-        y_pred = [x]
+        y_pred = self.__call__(x)
+
+        dout = [func_custo.derivada(y, y_pred)]
+
+        for camada in self.camadas[::-1]:
+            dout.append(camada.backprop(dout[-1]))
 
         for camada in self.camadas:
-            y_pred.append(camada(y_pred[-1]))
+            camada.atualizar(lr)
 
-        dout = [func_custo.derivada(y, y_pred[-1])]
-
-        for i, camada in enumerate(self.camadas[::-1]):
-            dout.append(camada.backprop(y_pred[-(i + 2)], dout[-1], lr))
-
-        return func_custo(y, y_pred[-1])
+        return func_custo(y, y_pred)
