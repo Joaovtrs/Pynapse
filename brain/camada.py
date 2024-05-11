@@ -1,18 +1,26 @@
 import numpy as np
 
 from .funcs_ativacao import FuncLinear
+from .funcs_init_pesos import FuncRandomNormal, FuncUns
 
 
 class Camada:
-    def __init__(self, n_entrada, n_neuronios, func_ativacao=FuncLinear()):
-        self.pesos = np.random.random((n_neuronios, n_entrada))
-        self.bias = np.random.random(n_neuronios)
+    def __init__(
+        self,
+        n_entrada,
+        n_neuronios,
+        func_ativacao=FuncLinear(),
+        init_pesos=FuncRandomNormal(),
+        init_bias=FuncUns()
+    ):
+        self.pesos = init_pesos(n_neuronios, n_entrada)
+        self.bias = init_bias(1, n_neuronios)
         self.func_ativacao = func_ativacao
 
         self.x = None
-        self.input, self.out = None, None
+        self.activ_inp, self.out = None, None
 
-        self.dinput, self.dx = None, None
+        self.dinp, self.dx = None, None
         self.dpesos, self.dbias = None, None
 
     def __str__(self):
@@ -25,16 +33,16 @@ class Camada:
 
     def __call__(self, x):
         self.x = x
-        self.input = np.dot(x, self.pesos.T) + self.bias
-        self.out = self.func_ativacao(self.input)
+        self.activ_inp = np.dot(x, self.pesos.T) + self.bias
+        self.out = self.func_ativacao(self.activ_inp)
         return self.out
 
     def backprop(self, dout):
-        self.dinput = self.func_ativacao.derivada(self.input) * dout
+        self.dinp = self.func_ativacao.derivada(self.activ_inp) * dout
 
-        self.dpesos = np.dot(self.dinput.T, self.x)
-        self.dbias = self.dinput.sum(axis=0)
-        self.dx = np.dot(self.dinput, self.pesos)
+        self.dpesos = np.dot(self.dinp.T, self.x)
+        self.dbias = self.dinp.sum(axis=0, keepdims=True)
+        self.dx = np.dot(self.dinp, self.pesos)
 
         return self.dx
 
