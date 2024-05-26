@@ -4,7 +4,27 @@ from .funcs_ativacao import FuncLinear
 from .funcs_init_pesos import FuncRandomNormal, FuncUns
 
 
-class Camada:
+class CamadaGenerica:
+    def __init__(self, n_entrada):
+        self.n_entrada = n_entrada
+
+    def __str__(self):
+        return 'Camada genérica'
+
+    def __repr__(self):
+        return self.__str__()
+
+    def __call__(self, x):
+        return x
+
+    def backprop(self, dout):
+        return dout
+
+    def atualizar(self, lr):
+        pass
+
+
+class Camada(CamadaGenerica):
     def __init__(
         self,
         n_entrada,
@@ -13,6 +33,7 @@ class Camada:
         init_pesos=FuncRandomNormal(),
         init_bias=FuncUns()
     ):
+        super().__init__(n_entrada)
         self.pesos = init_pesos(n_neuronios, n_entrada)
         self.bias = init_bias(1, n_neuronios)
         self.func_ativacao = func_ativacao
@@ -27,9 +48,6 @@ class Camada:
         return (f'{self.pesos.shape[1]} entradas e {self.pesos.shape[0]} '
                 f'neurônios\nPesos:\n{self.pesos}\nBias: {self.bias}\nFunção '
                 f'de Ativação: {self.func_ativacao}')
-
-    def __repr__(self):
-        return self.__str__()
 
     def __call__(self, x):
         self.x = x
