@@ -23,26 +23,35 @@ class Camada:
         self.dinp, self.dx = None, None
         self.dpesos, self.dbias = None, None
 
+        self.dropout_mask = None
+
     def __str__(self):
         return (
-            f'{self.pesos.shape[1]} entradas e {self.pesos.shape[0]} neurônios'
-            + f'\nParâmetros: {self.get_paran_cout()}'
+            f'\t\t{self.pesos.shape[1]} entradas e '
+            + f'{self.pesos.shape[0]} neurônios'
+            + f'\n\t\tFunção de ativação: {self.func_ativacao}'
+            + f'\n\t\tNúmero de parâmetros: {self.get_paran_cout()}'
         )
 
     def __repr__(self):
         return self.__str__()
 
-    def __call__(self, x):
+    def __call__(self, x, dropout_prob=0):
         self.x = x
         self.activ_inp = np.dot(x, self.pesos.T) + self.bias
-        self.out = self.func_ativacao(self.activ_inp)
+        self.dropout_mask = np.random.binomial(
+            1, 1 - dropout_prob, self.activ_inp.shape
+        ) / (1 - dropout_prob)
+        self.out = self.func_ativacao(self.activ_inp) * self.dropout_mask
+
         return self.out
 
-    def get_paran_cout(self):
-        return self.pesos.shape[1] * self.pesos.shape[0] + self.bias.shape[1]
-
     def backprop(self, dout):
-        self.dinp = self.func_ativacao.derivada(self.activ_inp) * dout
+        self.dinp = (
+            self.func_ativacao.derivada(self.activ_inp)
+            * dout
+            * self.dropout_mask
+        )
 
         self.dpesos = np.dot(self.dinp.T, self.x)
         self.dbias = self.dinp.sum(axis=0, keepdims=True)
@@ -53,3 +62,6 @@ class Camada:
     def atualizar(self, lr):
         self.pesos = self.pesos - lr * self.dpesos
         self.bias = self.bias - lr * self.dbias
+
+    def get_paran_cout(self):
+        return self.pesos.shape[1] * self.pesos.shape[0] + self.bias.shape[1]
