@@ -25,6 +25,7 @@ class Camada:
 
         self.dinp, self.dx = None, None
         self.dpesos, self.dbias = None, None
+        self.dpesos_anterior = 0.0
 
         self.dropout_mask = None
 
@@ -65,8 +66,11 @@ class Camada:
 
         return self.dx
 
-    def atualizar(self, lr):
-        self.pesos = self.pesos - lr * self.dpesos
+    def atualizar(self, lr, momentum=0):
+        self.dpesos_anterior = (
+            momentum * self.dpesos_anterior + lr * self.dpesos
+        )
+        self.pesos = self.pesos - self.dpesos_anterior
         self.bias = self.bias - lr * self.dbias
 
     def get_paran_cout(self):

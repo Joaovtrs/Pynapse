@@ -29,7 +29,7 @@ class RedeNeural:
                 print(f'Resultado da camada {i + 1}:\n{x}')
         return x
 
-    def backprop(self, x, y, func_custo, lr, dropout_prob=0):
+    def backprop(self, x, y, func_custo, lr, momentum=0, dropout_prob=0):
         y_pred = self(x, dropout_prob=dropout_prob)
 
         dout = [func_custo.derivada(y, y_pred)]
@@ -38,7 +38,7 @@ class RedeNeural:
             dout.append(camada.backprop(dout[-1]))
 
         for camada in self.camadas[::-1]:
-            camada.atualizar(lr)
+            camada.atualizar(lr, momentum)
 
         custo_reg = np.sum(
             [
