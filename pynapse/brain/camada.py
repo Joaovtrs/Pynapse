@@ -2,6 +2,7 @@ import numpy as np
 
 from .funcs_ativacao import FuncLinear
 from .funcs_init_pesos import FuncRandomNormal, FuncUns
+from .funcs_regularizacao import FuncL2
 
 
 class Camada:
@@ -10,12 +11,14 @@ class Camada:
         n_entrada,
         n_neuronios,
         func_ativacao=FuncLinear(),
+        func_regularizacao=FuncL2(0),
         init_pesos=FuncRandomNormal(),
         init_bias=FuncUns(),
     ):
         self.pesos = init_pesos(n_neuronios, n_entrada)
         self.bias = init_bias(1, n_neuronios)
         self.func_ativacao = func_ativacao
+        self.func_regularizacao = func_regularizacao
 
         self.x = None
         self.activ_inp, self.out = None, None
@@ -54,6 +57,9 @@ class Camada:
         )
 
         self.dpesos = np.dot(self.dinp.T, self.x)
+        self.dpesos = self.dpesos + self.func_regularizacao.derivada(
+            self.pesos, self.x.shape[0]
+        )
         self.dbias = self.dinp.sum(axis=0, keepdims=True)
         self.dx = np.dot(self.dinp, self.pesos)
 

@@ -1,3 +1,6 @@
+import numpy as np
+
+
 class RedeNeural:
     def __init__(self, camadas):
         self.camadas = camadas
@@ -34,7 +37,13 @@ class RedeNeural:
         for camada in self.camadas[::-1]:
             dout.append(camada.backprop(dout[-1]))
 
-        for camada in self.camadas:
+        for camada in self.camadas[::-1]:
             camada.atualizar(lr)
 
-        return func_custo(y, y_pred)
+        custo_reg = np.sum(
+            [
+                camada.func_regularizacao(camada.pesos, x.shape[0])
+                for camada in self.camadas
+            ]
+        )
+        return func_custo(y, y_pred) + custo_reg
