@@ -25,9 +25,8 @@ class Camada:
 
     def __str__(self):
         return (
-            f'{self.pesos.shape[1]} entradas e {self.pesos.shape[0]} '
-            f'neurônios\nPesos:\n{self.pesos}\nBias: {self.bias}\nFunção '
-            f'de Ativação: {self.func_ativacao}'
+            f'{self.pesos.shape[1]} entradas e {self.pesos.shape[0]} neurônios'
+            + f'\nParâmetros: {self.get_paran_cout()}'
         )
 
     def __repr__(self):
@@ -38,6 +37,9 @@ class Camada:
         self.activ_inp = np.dot(x, self.pesos.T) + self.bias
         self.out = self.func_ativacao(self.activ_inp)
         return self.out
+
+    def get_paran_cout(self):
+        return self.pesos.shape[1] * self.pesos.shape[0] + self.bias.shape[1]
 
     def backprop(self, dout):
         self.dinp = self.func_ativacao.derivada(self.activ_inp) * dout

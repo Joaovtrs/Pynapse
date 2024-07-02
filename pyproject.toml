@@ -28,7 +28,7 @@ addopts = '-p no:warnings'
 format = 'isort . && blue .'
 run = 'python .\pynapse\main.py'
 # pre_test = 'task lint'
-test = 'pytest -s -x --cov=fast_zero -vv'
+test = 'pytest -s -x --cov=pynapse -vv'
 post_test = 'coverage html'
 
 
