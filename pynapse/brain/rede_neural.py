@@ -19,7 +19,7 @@ class RedeNeural:
         return x
 
     def backprop(self, x, y, func_custo, lr):
-        y_pred = self.__call__(x)
+        y_pred = self(x)
 
         dout = [func_custo.derivada(y, y_pred)]
 

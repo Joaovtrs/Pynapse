@@ -33,7 +33,7 @@ class FuncMSE(FuncCustoGenerica):
 
     @staticmethod
     def derivada(y, y_pred):
-        return - (y - y_pred) / y.shape[0]
+        return -(y - y_pred) / y.shape[0]
 
 
 class FuncSAE(FuncCustoGenerica):
@@ -57,7 +57,7 @@ class FuncSSE(FuncCustoGenerica):
 
     @staticmethod
     def derivada(y, y_pred):
-        return - (y - y_pred)
+        return -(y - y_pred)
 
 
 class FuncEntropiaCruzada(FuncCustoGenerica):
@@ -65,11 +65,11 @@ class FuncEntropiaCruzada(FuncCustoGenerica):
         super().__init__('Função Entropia Cruzada')
 
     def __call__(self, y, y_pred):
-        return - np.mean(y * np.log(y_pred) + (1 - y) * np.log(1 - y_pred))
+        return -np.mean(y * np.log(y_pred) + (1 - y) * np.log(1 - y_pred))
 
     @staticmethod
     def derivada(y, y_pred):
-        return - (y - y_pred) / (y_pred * (1 - y_pred) * y.shape[0])
+        return -(y - y_pred) / (y_pred * (1 - y_pred) * y.shape[0])
 
 
 class FuncNegLogLikelihood(FuncCustoGenerica):
@@ -78,8 +78,8 @@ class FuncNegLogLikelihood(FuncCustoGenerica):
 
     def __call__(self, y, y_pred):
         k = np.nonzero(y)
-        return np.mean(- np.log(y_pred[k]))
+        return np.mean(-np.log(y_pred[k]))
 
     @staticmethod
     def derivada(y, y_pred):
-        return - (y - y_pred) / y.shape[0]
+        return -(y - y_pred) / y.shape[0]

@@ -32,7 +32,7 @@ class FuncSigmoid(FuncAtivacaoGenerica):
         return 1 / (1 + np.exp(-x))
 
     def derivada(self, x):
-        y = self.__call__(x)
+        y = self(x)
         return y * (1 - y)
 
 
@@ -46,8 +46,8 @@ class FuncTanh(FuncAtivacaoGenerica):
         return (expx - expmx) / (expx + expmx)
 
     def derivada(self, x):
-        y = self.__call__(x)
-        return 1 - y ** 2
+        y = self(x)
+        return 1 - y**2
 
 
 class FuncReLU(FuncAtivacaoGenerica):
@@ -83,7 +83,7 @@ class FuncELU(FuncAtivacaoGenerica):
         return np.where(x <= 0, self.alfa * (np.exp(x) - 1), x)
 
     def derivada(self, x):
-        y = self.__call__(x)
+        y = self(x)
         return np.where(x <= 0, self.alfa + y, 1)
 
 
