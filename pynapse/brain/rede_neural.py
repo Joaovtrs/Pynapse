@@ -47,3 +47,7 @@ class RedeNeural:
             ]
         )
         return func_custo(y, y_pred) + custo_reg
+
+    def mutacao(self, prob_mutacao=0.01, forca=0.01):
+        for camada in self.camadas:
+            camada.mutacao(prob_mutacao, forca)

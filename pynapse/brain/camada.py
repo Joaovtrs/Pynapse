@@ -1,3 +1,5 @@
+from random import random
+
 import numpy as np
 
 from .funcs_ativacao import FuncLinear
@@ -75,3 +77,12 @@ class Camada:
 
     def get_paran_cout(self):
         return self.pesos.shape[1] * self.pesos.shape[0] + self.bias.shape[1]
+
+    def mutacao(self, prob_mutacao=0.01, forca=0.01):
+        mutacoes = np.random.binomial(1, prob_mutacao, self.pesos.shape)
+        mutacoes = mutacoes * np.random.randn(*self.pesos.shape) * forca
+        self.pesos = self.pesos + mutacoes
+
+        mutacoes = np.random.binomial(1, prob_mutacao, self.bias.shape)
+        mutacoes = mutacoes * np.random.randn(*self.bias.shape) * forca
+        self.bias = self.bias + mutacoes
